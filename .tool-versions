@@ -5,3 +5,4 @@ hugo-extended 0.147.3
 golang        1.24.6
 nodejs        latest
 npm:pajv      latest
+git-lfs       latest
