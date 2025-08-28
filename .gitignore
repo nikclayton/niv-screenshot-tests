@@ -7,3 +7,9 @@ resources/_gen*
 .hugo_build.lock
 .vscode*
 mise.local.toml
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
