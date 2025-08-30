@@ -42,7 +42,7 @@ jobs:
       - run: pnpm exec playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
       - name: Delete existing screenshots, in case a test has been deleted
-        run: git rm -r ~/.screenshots && rm -rf ~/.screenshots/*
+        run: git rm -r .screenshots && rm -rf .screenshots/*
       - name: Run Playwright tests
         run: pnpm exec playwright test --update-snapshots
       - name: Commit and push updated screenshots
