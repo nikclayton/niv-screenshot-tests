@@ -21,9 +21,11 @@ jobs:
           # make sure to update .tool-versions as well!
           hugo-version: "0.147.3"
           extended: true
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
+          cache: 'pnpm'
       - uses: actions/cache@v4
         id: playwright-cache
         with:
@@ -31,14 +33,14 @@ jobs:
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        run: npm install -g pnpm && pnpm install
+        run: pnpm install
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
       - run: pnpm exec playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
       - name: Delete existing screenshots, in case a test has been deleted
-        run: rm -rf ~/.screenshots/*
+        run: git rm -r ~/.screenshots/*
       - name: Run Playwright tests
         run: pnpm exec playwright test --update-snapshots
       - name: Commit and push updated screenshots
