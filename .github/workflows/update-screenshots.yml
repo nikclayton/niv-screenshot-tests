@@ -26,6 +26,7 @@ jobs:
           mkdir -p "$HOME/.local"
           git-lfs-*/install.sh --local
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           lfs: true
       - name: Setup Hugo
