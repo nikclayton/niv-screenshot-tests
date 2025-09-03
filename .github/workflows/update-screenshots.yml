@@ -11,9 +11,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    strategy:
-      matrix:
-        shard: [1, 2]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,15 +36,16 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: pnpm install
-      - name: Install Playwright Browsers
+      - name: Install Playwright Browsers and system dependencies
         run: pnpm exec playwright install --with-deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-      - run: pnpm exec playwright install-deps
+      - name: Install Playwright system dependencies
+        run: pnpm exec playwright install-deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
       - name: Delete existing screenshots, in case a test has been deleted
         run: git rm --ignore-unmatch -r screenshots && rm -rf screenshots/*
-      - name: Run Playwright tests (shard ${{ matrix.shard }}
-        run: pnpm exec playwright test --update-snapshots --shard=${{ matrix.shard }}/2
+      - name: Run Playwright tests
+        run: pnpm exec playwright test --update-snapshots
       - name: Commit and push updated screenshots
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
