@@ -11,21 +11,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    container:
-      image: mcr.microsoft.com/playwright:v1.55.0-noble
-    env:
-      # Firefox is unable to launch if the `HOME` folder isn't owned by the
-      # current user.
-      HOME: /root
     steps:
-      - name: Install Git LFS
-        run: |
-          ARCH=$(uname -m | sed 's/i386/386/;s/x86_64/amd64/;s/armv7l/arm/;s/aarch64/arm64/')
-          VERSION=$(curl --no-progress-meter https://api.github.com/repos/git-lfs/git-lfs/releases/latest | grep -oP '"tag_name": "\K[^"]+')
-          curl -L "https://github.com/git-lfs/git-lfs/releases/download/${VERSION}/git-lfs-linux-${ARCH}-${VERSION}.tar.gz" | tar -xz
-          mkdir -p "$HOME/.local"
-          git-lfs-*/install.sh --local
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - uses: actions/checkout@v4
         with:
           lfs: true
@@ -42,8 +28,20 @@ jobs:
         with:
           node-version: lts/*
           cache: 'pnpm'
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: pnpm install
+      - name: Install Playwright Browsers and system dependencies
+        run: pnpm exec playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+      - name: Install Playwright system dependencies
+        run: pnpm exec playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
       - name: Delete existing screenshots, in case a test has been deleted
         run: git rm --ignore-unmatch -r screenshots && rm -rf screenshots/*
       - name: Run Playwright tests
