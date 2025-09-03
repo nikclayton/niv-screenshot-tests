@@ -25,7 +25,7 @@ jobs:
           curl -L "https://github.com/git-lfs/git-lfs/releases/download/${VERSION}/git-lfs-linux-${ARCH}-${VERSION}.tar.gz" | tar -xz
           mkdir -p "$HOME/.local"
           git-lfs-*/install.sh --local
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"      - uses: actions/checkout@v4
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - uses: actions/checkout@v4
         with:
           lfs: true
