@@ -1,5 +1,3 @@
-
-
 import {expect, Locator, Page} from "@playwright/test";
 import {PageAssertionsToHaveScreenshotOptions} from "playwright/types/test";
 
