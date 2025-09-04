@@ -459,6 +459,7 @@ p,ul,ol {
   .card {
     border: none;
     position: relative;
+    min-height: 100vh;
     justify-items: start;
 
     &::before,
